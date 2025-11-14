@@ -1,11 +1,302 @@
 <!DOCTYPE html>
-<html lang="pr-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loja Espotiva</title>
+    <title>SportMax - Loja Esportiva</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #004aad;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        nav {
+            background-color: #003b8e;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 8px 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .produto {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .produto:hover {
+            transform: scale(1.03);
+        }
+
+        .produto img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .produto-conteudo {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .produto h3 {
+            margin-top: 0;
+            color: #004aad;
+        }
+
+        .descricao {
+            font-size: 0.9em;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .opcoes {
+            margin: 10px 0;
+        }
+
+        select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .preco {
+            color: #004aad;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: #004aad;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #003b8e;
+        }
+
+        footer {
+            background-color: #003b8e;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        #carrinho {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        #lista-carrinho {
+            list-style: none;
+            padding: 0;
+        }
+
+        #lista-carrinho li {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+        }
+
+        #lista-carrinho li:last-child {
+            border-bottom: none;
+        }
+
+        #total {
+            font-weight: bold;
+            color: #004aad;
+        }
+
+    </style>
 </head>
 <body>
-  <h1>MInha loja é produtos esportivos, como roupas apropriadas para cada esporte, calçados, e uma diversidade imensa de acessorios relacionados. </h1>  
+
+    <header>
+        <h1>🏆 SportMax - Loja de Produtos Esportivos</h1>
+        <p>Os melhores produtos para o seu desempenho!</p>
+    </header>
+
+    <nav>
+        <a href="#">Início</a>
+        <a href="#">Masculino</a>
+        <a href="#">Feminino</a>
+        <a href="#">Acessórios</a>
+        <a href="#">Promoções</a>
+        <a href="#">Contato</a>
+    </nav>
+
+    <main>
+        <section class="produtos" id="produtos">
+            <!-- Produtos adicionados via JavaScript -->
+        </section>
+
+        <section id="carrinho">
+            <h2>🛒 Carrinho de Compras</h2>
+            <ul id="lista-carrinho"></ul>
+            <p>Total: <span id="total">R$ 0,00</span></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 SportMax | Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        const produtos = [
+            {
+                nome: "Tênis Nike Air Zoom",
+                preco: 499.90,
+                img: "https://images.unsplash.com/photo-1600180758890-6ec2e1b4a6f8?auto=format&fit=crop&w=800&q=80",
+                descricao: "Tênis de corrida leve, ideal para treinos e competições.",
+                tamanhos: ["38", "39", "40", "41", "42"],
+                cores: ["Preto", "Branco", "Azul"]
+            },
+            {
+                nome: "Camiseta Esportiva Adidas",
+                preco: 129.90,
+                img: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=800&q=80",
+                descricao: "Camiseta dry-fit para treinos intensos.",
+                tamanhos: ["P", "M", "G", "GG"],
+                cores: ["Branca", "Preta", "Vermelha"]
+            },
+            {
+                nome: "Bola de Futebol Nike",
+                preco: 189.90,
+                img: "https://images.unsplash.com/photo-1623089876579-f9b98b58e8b1?auto=format&fit=crop&w=800&q=80",
+                descricao: "Bola oficial costurada à mão com excelente durabilidade.",
+                tamanhos: ["5", "6"],
+                cores: ["Branca", "Laranja"]
+            },
+            {
+                nome: "Mochila Puma",
+                preco: 149.90,
+                img: "https://images.unsplash.com/photo-1602083432200-6d1f67bfcf49?auto=format&fit=crop&w=800&q=80",
+                descricao: "Mochila espaçosa e resistente, ideal para academia ou viagens.",
+                tamanhos: ["Único"],
+                cores: ["Preta", "Cinza"]
+            },
+            {
+                nome: "Garrafa Térmica Under Armour",
+                preco: 89.90,
+                img: "https://images.unsplash.com/photo-1616401784845-64382b5b4bfc?auto=format&fit=crop&w=800&q=80",
+                descricao: "Mantém sua bebida gelada por até 12 horas.",
+                tamanhos: ["600ml", "1L"],
+                cores: ["Azul", "Preta", "Verde"]
+            },
+            {
+                nome: "Shorts de Corrida Nike",
+                preco: 99.90,
+                img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80",
+                descricao: "Leve e confortável, ideal para corrida e academia.",
+                tamanhos: ["P", "M", "G", "GG"],
+                cores: ["Preto", "Cinza", "Azul"]
+            }
+        ];
+
+        const container = document.getElementById("produtos");
+        const listaCarrinho = document.getElementById("lista-carrinho");
+        const total = document.getElementById("total");
+        let carrinho = [];
+        
+        produtos.forEach((p, index) => {
+            const div = document.createElement("div");
+            div.classList.add("produto");
+            div.innerHTML = `
+                <img src="${p.img}" alt="${p.nome}">
+                <div class="produto-conteudo">
+                    <h3>${p.nome}</h3>
+                    <p class="descricao">${p.descricao}</p>
+                    <div class="opcoes">
+                        <label>Tamanho:</label>
+                        <select id="tamanho-${index}">
+                            ${p.tamanhos.map(t => `<option>${t}</option>`).join("")}
+                        </select>
+                    </div>
+                    <div class="opcoes">
+                        <label>Cor:</label>
+                        <select id="cor-${index}">
+                            ${p.cores.map(c => `<option>${c}</option>`).join("")}
+                        </select>
+                    </div>
+                    <p class="preco">R$ ${p.preco.toFixed(2)}</p>
+                    <button onclick="adicionarCarrinho(${index})">Adicionar ao Carrinho</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        function adicionarCarrinho(i) {
+            const produto = produtos[i];
+            const tamanho = document.getElementById(`tamanho-${i}`).value;
+            const cor = document.getElementById(`cor-${i}`).value;
+            carrinho.push({ nome: produto.nome, preco: produto.preco, tamanho, cor });
+            atualizarCarrinho();
+        }
+
+        function atualizarCarrinho() {
+            listaCarrinho.innerHTML = "";
+            let soma = 0;
+            carrinho.forEach((item) => {
+                soma += item.preco;
+                const li = document.createElement("li");
+                li.textContent = `${item.nome} - ${item.cor}, ${item.tamanho} | R$ ${item.preco.toFixed(2)}`;
+                listaCarrinho.appendChild(li);
+            });
+            total.textContent = `R$ ${soma.toFixed(2)}`;
+        }
+    </script>
 </body>
 </html>
