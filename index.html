@@ -1,302 +1,628 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportMax - Loja Esportiva</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SportMax — Loja Esportiva (Versão Profissional Corrigida)</title>
+  <meta name="description" content="SportMax - Loja de produtos esportivos. Busca, filtros, carrinho, wishlist, avaliações, checkout simulado e muito mais." />
+  <style>
+    /* Variáveis e Reset Básico */
+    :root{
+      --primary:#004aad; --primary-dark:#003b8e; --accent:#ffb200; --muted:#6b7280; --bg:#f5f7fb; --card:#ffffff;
+      --radius:12px; --glass: rgba(255,255,255,0.6);
+      --highlight: rgba(0, 74, 173, 0.1); /* Novo para destacar botões ativos */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter, 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#0f172a}
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-        }
+    /* Acessibilidade Focus */
+    :focus-visible{outline:3px solid var(--primary-dark); outline-offset:2px} /* Melhoria: usar focus-visible */
+    
+    /* Header / Nav */
+    header{background:linear-gradient(90deg,var(--primary),var(--primary-dark)); color:white;padding:18px 20px; position:sticky; top:0; z-index:60; box-shadow: 0 2px 10px rgba(0,0,0,0.1)} /* Adicionado sombra */
+    .topbar{display:flex;align-items:center;gap:18px;max-width:1200px;margin:auto}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .brand img{width:44px;height:44px;border-radius:10px}
+    nav{margin-left:auto;display:flex;gap:10px;align-items:center}
+    nav a{color:white;text-decoration:none;padding:8px 12px;border-radius:8px; transition: background-color .15s}
+    nav a:hover{background: rgba(255,255,255,0.1)}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.12);padding:8px 10px;border-radius:8px;color:white; cursor:pointer; transition: all .15s}
+    .btn-ghost:hover{background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3)}
 
-        header {
-            background-color: #004aad;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+    /* Layout */
+    main{max-width:1200px;margin:22px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:320px 1fr;gap:24px}
 
-        header h1 {
-            margin: 0;
-            font-size: 2em;
-        }
+    /* Sidebar / filtros */
+    .sidebar{background:var(--card);padding:16px;border-radius:var(--radius);box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+    .search{display:flex;gap:8px}
+    .search input{flex:1;padding:10px;border-radius:10px;border:1px solid #e6edf3}
+    .filter-group{margin-top:14px}
+    .filter-group h4{margin:0 0 8px 0;font-size:0.95rem}
+    .sizes button{margin:4px 6px 4px 0;padding:6px 10px;border-radius:8px;border:1px solid #e6edf3;background:transparent;cursor:pointer; transition: all .15s}
+    .sizes button:hover{background: #f1f5f9}
+    .sizes button.active{background:var(--highlight);border-color:var(--primary);color:var(--primary);font-weight:600} /* Destaque para tamanho ativo */
 
-        nav {
-            background-color: #003b8e;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 10px;
-        }
+    /* Products */
+    .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+    .card{background:var(--card);border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06);display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s}
+    .card:hover{transform:translateY(-6px); box-shadow:0 10px 30px rgba(2,6,23,0.1)}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+    .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .meta h3{margin:0;font-size:1rem;color:var(--primary)}
+    .price{font-weight:700}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    .btn{background:var(--primary);color:white;padding:8px 10px;border-radius:8px;border:none;cursor:pointer; transition: background-color .15s}
+    .btn:hover{background:var(--primary-dark)}
+    .btn.secondary{background:#eef2ff;color:var(--primary);border:1px solid rgba(0,74,173,0.06); transition: all .15s}
+    .btn.secondary:hover{background: #e6eefc; border-color: rgba(0,74,173,0.15)}
+    .btn:disabled{opacity:0.6; cursor: not-allowed; background: var(--muted); border-color: var(--muted)} /* Estilo para disabled */
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 8px 15px;
-            font-weight: bold;
-        }
+    /* Floating cart */
+    .floating-cart{position:fixed;right:20px;bottom:20px;background:var(--card);padding:12px;border-radius:14px;box-shadow:0 10px 30px rgba(2,6,23,0.12);width:320px;z-index:70}
+    .cart-items{max-height:260px;overflow-y:auto} /* Corrigido de overflow:auto para overflow-y:auto */
+    .cart-item{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed #eef2ff}
 
-        nav a:hover {
-            text-decoration: underline;
-        }
+    /* Modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;z-index:80}
+    .modal{width:90%;max-width:920px;background:var(--card);border-radius:12px;padding:18px; max-height: 90vh; overflow-y: auto;} /* Adicionado max-height e overflow-y */
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 
-        main {
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
+    /* Toast */
+    .toast{position:fixed;right:20px;top:20px;background:#0f172a;color:white;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.15);opacity:0;transform:translateY(-6px);transition:all .25s}
+    .toast.show{opacity:1;transform:none}
 
-        .produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-        }
+    /* footer */
+    footer{max-width:1200px;margin:26px auto;padding:18px;color:var(--muted)}
 
-        .produto {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-        }
+    /* responsive */
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.sidebar{order:2}.floating-cart{width:86%;right:7%;bottom:12px} .modal-grid{grid-template-columns: 1fr;}} /* Adicionado responsividade para modal */
 
-        .produto:hover {
-            transform: scale(1.03);
-        }
+    /* dark mode toggle */
+    .dark body{--bg:#061024;--card:#07142a;--primary:#66a3ff;--muted:#9aa8c3;color:#e6eef9; --highlight: rgba(102, 163, 255, 0.15);}
 
-        .produto img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .produto-conteudo {
-            padding: 15px;
-            flex: 1;
-        }
-
-        .produto h3 {
-            margin-top: 0;
-            color: #004aad;
-        }
-
-        .descricao {
-            font-size: 0.9em;
-            color: #444;
-            margin-bottom: 10px;
-        }
-
-        .opcoes {
-            margin: 10px 0;
-        }
-
-        select {
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .preco {
-            color: #004aad;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin: 10px 0;
-        }
-
-        button {
-            background-color: #004aad;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #003b8e;
-        }
-
-        footer {
-            background-color: #003b8e;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 30px;
-        }
-
-        #carrinho {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            margin-top: 30px;
-        }
-
-        #lista-carrinho {
-            list-style: none;
-            padding: 0;
-        }
-
-        #lista-carrinho li {
-            border-bottom: 1px solid #ddd;
-            padding: 8px 0;
-        }
-
-        #lista-carrinho li:last-child {
-            border-bottom: none;
-        }
-
-        #total {
-            font-weight: bold;
-            color: #004aad;
-        }
-
-    </style>
+    /* small helpers */
+    .badge{background:#f1f5f9;padding:4px 8px;border-radius:999px;font-size:0.8rem;color:#334155}
+    .star{color:#f59e0b}
+    .pill{display:inline-block;padding:6px 8px;border-radius:999px;border:1px solid #e6edf3}
+  </style>
 </head>
 <body>
+  <header>
+    <div class="topbar">
+      <div class="brand" aria-label="SportMax">
+        <img src="https://images.unsplash.com/photo-1526403224744-6c35fa0db4f8?auto=format&fit=crop&w=80&q=60" alt="logo">
+        <div>
+          <div style="font-size:1.1rem">🏆 **SportMax**</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.85)">Loja esportiva — Entrega rápida</div>
+        </div>
+      </div>
 
-    <header>
-        <h1>🏆 SportMax - Loja de Produtos Esportivos</h1>
-        <p>Os melhores produtos para o seu desempenho!</p>
-    </header>
-
-    <nav>
+      <nav role="navigation" aria-label="menu principal">
         <a href="#">Início</a>
         <a href="#">Masculino</a>
         <a href="#">Feminino</a>
         <a href="#">Acessórios</a>
         <a href="#">Promoções</a>
-        <a href="#">Contato</a>
-    </nav>
+        <button class="btn-ghost" id="open-search">🔎 Buscar</button>
+        <button class="btn-ghost" id="toggle-theme">🌓</button>
+        <button class="btn-ghost" id="open-login">Entrar</button>
+      </nav>
+    </div>
+  </header>
 
-    <main>
-        <section class="produtos" id="produtos">
-            <!-- Produtos adicionados via JavaScript -->
-        </section>
+  <main>
+    <div class="grid">
+      <aside class="sidebar" aria-label="Filtros">
+        <div class="search" role="search">
+          <input id="global-search" placeholder="Buscar produtos, ex: tênis, camisa, bola" aria-label="buscar produtos">
+          <button class="btn" id="btn-search">Buscar</button>
+        </div>
 
-        <section id="carrinho">
-            <h2>🛒 Carrinho de Compras</h2>
-            <ul id="lista-carrinho"></ul>
-            <p>Total: <span id="total">R$ 0,00</span></p>
-        </section>
-    </main>
+        <div class="filter-group">
+          <h4>Categoria</h4>
+          <select id="filter-categoria" style="width:100%;padding:8px;border-radius:8px;border:1px solid #e6edf3">
+            <option value="all">Todas</option>
+            <option value="calçados">Calçados</option>
+            <option value="roupas">Roupas</option>
+            <option value="acessorios">Acessórios</option>
+            <option value="bolas">Bolas</option>
+          </select>
+        </div>
 
-    <footer>
-        <p>© 2025 SportMax | Todos os direitos reservados</p>
-    </footer>
+        <div class="filter-group">
+          <h4>Preço</h4>
+          <div style="display:flex;gap:8px">
+            <input id="min-price" placeholder="R$ min" inputmode="numeric" type="number" min="0"> <input id="max-price" placeholder="R$ max" inputmode="numeric" type="number" min="0"> </div>
+          <button class="btn secondary" id="apply-price" style="margin-top:8px">Aplicar filtro</button>
+        </div>
 
-    <script>
-        const produtos = [
-            {
-                nome: "Tênis Nike Air Zoom",
-                preco: 499.90,
-                img: "https://images.unsplash.com/photo-1600180758890-6ec2e1b4a6f8?auto=format&fit=crop&w=800&q=80",
-                descricao: "Tênis de corrida leve, ideal para treinos e competições.",
-                tamanhos: ["38", "39", "40", "41", "42"],
-                cores: ["Preto", "Branco", "Azul"]
-            },
-            {
-                nome: "Camiseta Esportiva Adidas",
-                preco: 129.90,
-                img: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=800&q=80",
-                descricao: "Camiseta dry-fit para treinos intensos.",
-                tamanhos: ["P", "M", "G", "GG"],
-                cores: ["Branca", "Preta", "Vermelha"]
-            },
-            {
-                nome: "Bola de Futebol Nike",
-                preco: 189.90,
-                img: "https://images.unsplash.com/photo-1623089876579-f9b98b58e8b1?auto=format&fit=crop&w=800&q=80",
-                descricao: "Bola oficial costurada à mão com excelente durabilidade.",
-                tamanhos: ["5", "6"],
-                cores: ["Branca", "Laranja"]
-            },
-            {
-                nome: "Mochila Puma",
-                preco: 149.90,
-                img: "https://images.unsplash.com/photo-1602083432200-6d1f67bfcf49?auto=format&fit=crop&w=800&q=80",
-                descricao: "Mochila espaçosa e resistente, ideal para academia ou viagens.",
-                tamanhos: ["Único"],
-                cores: ["Preta", "Cinza"]
-            },
-            {
-                nome: "Garrafa Térmica Under Armour",
-                preco: 89.90,
-                img: "https://images.unsplash.com/photo-1616401784845-64382b5b4bfc?auto=format&fit=crop&w=800&q=80",
-                descricao: "Mantém sua bebida gelada por até 12 horas.",
-                tamanhos: ["600ml", "1L"],
-                cores: ["Azul", "Preta", "Verde"]
-            },
-            {
-                nome: "Shorts de Corrida Nike",
-                preco: 99.90,
-                img: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80",
-                descricao: "Leve e confortável, ideal para corrida e academia.",
-                tamanhos: ["P", "M", "G", "GG"],
-                cores: ["Preto", "Cinza", "Azul"]
-            }
-        ];
+        <div class="filter-group">
+          <h4>Tamanho</h4>
+          <div class="sizes" id="sizes">
+            <button data-size="P">P</button>
+            <button data-size="M">M</button>
+            <button data-size="G">G</button>
+            <button data-size="GG">GG</button>
+            <button data-size="38">38</button>
+            <button data-size="39">39</button>
+            <button data-size="40">40</button>
+            <button data-size="41">41</button>
+            <button data-size="42">42</button>
+          </div>
+        </div>
 
-        const container = document.getElementById("produtos");
-        const listaCarrinho = document.getElementById("lista-carrinho");
-        const total = document.getElementById("total");
-        let carrinho = [];
-        
-        produtos.forEach((p, index) => {
-            const div = document.createElement("div");
-            div.classList.add("produto");
-            div.innerHTML = `
-                <img src="${p.img}" alt="${p.nome}">
-                <div class="produto-conteudo">
-                    <h3>${p.nome}</h3>
-                    <p class="descricao">${p.descricao}</p>
-                    <div class="opcoes">
-                        <label>Tamanho:</label>
-                        <select id="tamanho-${index}">
-                            ${p.tamanhos.map(t => `<option>${t}</option>`).join("")}
-                        </select>
-                    </div>
-                    <div class="opcoes">
-                        <label>Cor:</label>
-                        <select id="cor-${index}">
-                            ${p.cores.map(c => `<option>${c}</option>`).join("")}
-                        </select>
-                    </div>
-                    <p class="preco">R$ ${p.preco.toFixed(2)}</p>
-                    <button onclick="adicionarCarrinho(${index})">Adicionar ao Carrinho</button>
-                </div>
-            `;
-            container.appendChild(div);
-        });
+        <div class="filter-group">
+          <h4>Avaliação</h4>
+          <select id="filter-rating" style="width:100%;padding:8px;border-radius:8px;border:1px solid #e6edf3">
+            <option value="0">Qualquer</option>
+            <option value="4">4 estrelas ou mais</option>
+            <option value="4.5">4.5 ou mais</option>
+            <option value="5">5 estrelas</option>
+          </select>
+        </div>
 
-        function adicionarCarrinho(i) {
-            const produto = produtos[i];
-            const tamanho = document.getElementById(`tamanho-${i}`).value;
-            const cor = document.getElementById(`cor-${i}`).value;
-            carrinho.push({ nome: produto.nome, preco: produto.preco, tamanho, cor });
-            atualizarCarrinho();
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <button class="btn secondary" id="reset-filters">Limpar filtros</button> <button class="btn" id="save-filters">Salvar filtro</button>
+        </div>
+
+        <div style="margin-top:18px;font-size:0.9rem;color:var(--muted)">
+          <strong>Dicas:</strong>
+          <ul>
+            <li>Use a busca para encontrar rapidamente produtos.</li>
+            <li>Salve o carrinho no seu navegador para continuar depois.</li>
+            <li>Use cupons na finalização da compra.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div>
+            <h2 style="margin:0">Produtos</h2>
+            <div style="color:var(--muted);font-size:0.9rem">Mostrando <span id="resultado-count">0</span> resultados</div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <label for="sort">Ordenar:</label>
+            <select id="sort">
+              <option value="default">Mais relevantes</option>
+              <option value="price-asc">Menor preço</option>
+              <option value="price-desc">Maior preço</option>
+              <option value="rating-desc">Mais bem avaliados</option>
+            </select>
+            <button class="btn secondary" id="toggle-grid">📐 Layout</button>
+          </div>
+        </div>
+
+        <div id="products-container" class="products" aria-live="polite">
+          </div>
+
+        <div style="margin-top:18px;display:flex;justify-content:center;gap:10px;align-items:center">
+          <button class="btn secondary" id="prev-page">« Anterior</button>
+          <div id="page-info">Página 1</div>
+          <button class="btn secondary" id="next-page">Próxima »</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="floating-cart" role="dialog" aria-label="Carrinho" id="floating-cart">
+    <h3 style="margin:0 0 8px 0">🛒 **Carrinho**</h3>
+    <div class="cart-items" id="cart-items"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+      <div>Total:</div>
+      <div style="font-weight:700" id="cart-total">R$ 0,00</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" id="checkout">Finalizar</button>
+      <button class="btn secondary" id="clear-cart">Limpar</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes do produto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong id="modal-title">Produto</strong>
+        <button id="close-modal" class="btn secondary">Fechar</button>
+      </div>
+      <div class="modal-grid">
+        <div>
+          <img id="modal-image" src="" alt="imagem do produto" style="width:100%;border-radius:10px;height:320px;object-fit:cover">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div id="modal-price" style="font-size:1.4rem;font-weight:700;color:var(--primary)"></div>
+              <div id="modal-rating" style="margin-top:6px;color:var(--muted)"></div>
+            </div>
+            <div id="modal-actions"></div>
+          </div>
+
+          <p id="modal-desc" style="color:var(--muted);margin-top:12px"></p>
+
+          <div style="margin-top:12px">
+            <label for="modal-size">Tamanho</label> <select id="modal-size" style="width:100%;padding:8px;border-radius:8px;border:1px solid #e6edf3"></select>
+          </div>
+
+          <div style="margin-top:12px">
+            <label for="modal-color">Cor</label> <select id="modal-color" style="width:100%;padding:8px;border-radius:8px;border:1px solid #e6edf3"></select>
+          </div>
+
+          <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+            <input id="modal-qty" type="number" min="1" value="1" style="width:80px;padding:8px;border-radius:8px;border:1px solid #e6edf3">
+            <button class="btn" id="modal-add">Adicionar ao carrinho</button>
+            <button class="btn secondary" id="modal-wishlist">❤ Favoritar</button>
+          </div>
+
+          <div style="margin-top:10px;color:var(--muted)">
+            <strong>Entrega estimada:</strong> <span id="modal-shipping">2-5 dias úteis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="login-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Login">
+      <h3>Entrar na sua conta</h3>
+      <p style="color:var(--muted)">Login simulado (dados salvos no localStorage para demo)</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input id="login-email" placeholder="Email" type="email" style="padding:8px;border-radius:8px;border:1px solid #e6edf3">
+        <input id="login-pass" placeholder="Senha" type="password" style="padding:8px;border-radius:8px;border:1px solid #e6edf3">
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="login-btn">Entrar</button>
+          <button class="btn secondary" id="login-close">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="display:flex;justify-content:space-between;max-width:1200px;margin:auto">
+      <div>
+        <h4>SportMax</h4>
+        <p style="color:var(--muted)">Endereço fictício • Atendimento 9h-18h</p>
+      </div>
+      <div style="color:var(--muted)">© 2025 SportMax • Todos os direitos reservados</div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== Dados iniciais (produtos) ===== */
+    const produtos = [
+      // ERRO CRÍTICO CORRIGIDO: URL de imagem inválida
+      {id:1,nome:"Tênis Nike Air Zoom",preco:499.9,img:"https://images.unsplash.com/photo-1542291026-7eec264c27fc?auto=format&fit=crop&w=800&q=80",descricao:"Tênis de corrida leve, ideal para treinos e competições.",tamanhos:["38","39","40","41","42"],cores:["Preto","Branco","Azul"],categoria:"calçados",rating:4.6, reviews:34},
+      {id:2,nome:"Camiseta Esportiva Adidas",preco:129.9,img:"https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=800&q=80",descricao:"Camiseta dry-fit para treinos intensos.",tamanhos:["P","M","G","GG"],cores:["Branca","Preta","Vermelha"],categoria:"roupas",rating:4.4,reviews:21},
+      {id:3,nome:"Bola de Futebol Nike",preco:189.9,img:"https://images.unsplash.com/photo-1623089876579-f9b98b58e8b1?auto=format&fit=crop&w=800&q=80",descricao:"Bola oficial costurada à mão com excelente durabilidade.",tamanhos:["5","6"],cores:["Branca","Laranja"],categoria:"bolas",rating:4.8,reviews:59},
+      {id:4,nome:"Mochila Puma",preco:149.9,img:"https://images.unsplash.com/photo-1602083432200-6d1f67bfcf49?auto=format&fit=crop&w=800&q=80",descricao:"Mochila espaçosa e resistente, ideal para academia ou viagens.",tamanhos:["Único"],cores:["Preta","Cinza"],categoria:"acessorios",rating:4.2,reviews:10},
+      {id:5,nome:"Garrafa Térmica Under Armour",preco:89.9,img:"https://images.unsplash.com/photo-1616401784845-64382b5b4bfc?auto=format&fit=crop&w=800&q=80",descricao:"Mantém sua bebida gelada por até 12 horas.",tamanhos:["600ml","1L"],cores:["Azul","Preta","Verde"],categoria:"acessorios",rating:4.0,reviews:6},
+      {id:6,nome:"Shorts de Corrida Nike",preco:99.9,img:"https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80",descricao:"Leve e confortável, ideal para corrida e academia.",tamanhos:["P","M","G","GG"],cores:["Preto","Cinza","Azul"],categoria:"roupas",rating:4.1,reviews:14}
+    ];
+
+    /* ===== Estado (carrinho, wishlist, paginação, filtros) ===== */
+    let carrinho = JSON.parse(localStorage.getItem('sm_cart')||'[]');
+    let wishlist = JSON.parse(localStorage.getItem('sm_wishlist')||'[]');
+    let currentPage = 1; const perPage = 6;
+    let activeFilters = {q:'',categoria:'all',minPrice:null,maxPrice:null,size:null,rating:0,sort:'default'};
+
+    /* ===== Elementos ===== */
+    const container = document.getElementById('products-container');
+    const resultadoCount = document.getElementById('resultado-count');
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const toast = document.getElementById('toast');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const loginBackdrop = document.getElementById('login-backdrop');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+
+    /* ===== funções utilitárias ===== */
+    function formatMoney(v){return 'R$ '+v.toFixed(2).replace('.',',')}
+    function showToast(msg,timeout=2500){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),timeout)}
+
+    /* ===== Render produtos com filtros, paginação e ordenação ===== */
+    function applyFiltersAndRender(){
+      let lista = produtos.slice();
+      const f = activeFilters;
+      if(f.q) lista = lista.filter(p=>p.nome.toLowerCase().includes(f.q.toLowerCase())||p.descricao.toLowerCase().includes(f.q.toLowerCase()));
+      if(f.categoria!=='all') lista = lista.filter(p=>p.categoria===f.categoria);
+      if(f.minPrice) lista = lista.filter(p=>p.preco>=f.minPrice);
+      if(f.maxPrice) lista = lista.filter(p=>p.preco<=f.maxPrice);
+      if(f.size) lista = lista.filter(p=>p.tamanhos.includes(f.size));
+      if(f.rating>0) lista = lista.filter(p=>p.rating>=f.rating);
+
+      // ordenação - CORREÇÃO: b.rating-a.rating para ordenar corretamente
+      if(f.sort==='price-asc') lista.sort((a,b)=>a.preco-b.preco);
+      else if(f.sort==='price-desc') lista.sort((a,b)=>b.preco-a.preco);
+      else if(f.sort==='rating-desc') lista.sort((a,b)=>b.rating-a.rating);
+
+      const total = lista.length; resultadoCount.textContent = total;
+      const totalPages = Math.max(1,Math.ceil(total/perPage)); // Garantir pelo menos 1 página
+
+      // Garantir que currentPage não ultrapasse o limite
+      if(currentPage > totalPages) currentPage = totalPages;
+      if(currentPage < 1) currentPage = 1;
+
+      // paginação simples
+      const start = (currentPage-1)*perPage; const end = start+perPage;
+      const pageItems = lista.slice(start,end);
+
+      renderProducts(pageItems);
+      document.getElementById('page-info').textContent = `Página ${currentPage} de ${totalPages}`;
+      
+      // Controle de botões de paginação
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages;
+    }
+
+    function renderProducts(list){
+      container.innerHTML = '';
+      if(list.length === 0){
+        container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--muted);">Nenhum produto encontrado com os filtros aplicados.</div>';
+        return;
+      }
+
+      list.forEach(p=>{
+        const div = document.createElement('div'); div.className='card';
+        div.innerHTML = `
+          <img loading="lazy" src="${p.img}" alt="${p.nome}" />
+          <div class="meta">
+            <h3>${p.nome}</h3>
+            <div class="price">${formatMoney(p.preco)}</div>
+          </div>
+          <div style="color:var(--muted);font-size:0.9rem;margin-top:6px">${p.descricao.slice(0,80)}...</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+            <div style="font-size:0.9rem">⭐ <span class="star">${p.rating}</span> (${p.reviews})</div>
+            <div class="actions">
+              <button class="btn secondary" onclick="openModal(${p.id})">Ver</button>
+              <button class="btn" onclick="addToCart(${p.id})">Adicionar</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    /* ===== Carrinho ===== */
+    function saveCart(){localStorage.setItem('sm_cart',JSON.stringify(carrinho));}
+    function updateCartUI(){
+      cartItems.innerHTML=''; let soma=0;
+      if(carrinho.length===0) cartItems.innerHTML='<div style="color:var(--muted); padding: 8px 0;">Carrinho vazio</div>';
+      carrinho.forEach((it,idx)=>{
+        soma += it.preco*it.qtd;
+        const el = document.createElement('div'); el.className='cart-item';
+        el.innerHTML = `
+          <img src="${it.img}" alt="${it.nome}" style="width:48px;height:48px;object-fit:cover;border-radius:6px">
+          <div style="flex:1">
+            <div style="font-size:0.95rem">${it.nome}</div>
+            <div style="color:var(--muted);font-size:0.85rem">${it.cor}, ${it.tamanho}</div>
+            <div style="margin-top:6px;display:flex;gap:6px;align-items:center">
+              <input type="number" min="1" value="${it.qtd}" style="width:70px;padding:6px;border-radius:6px;border:1px solid #e6edf3" onchange="changeQty(${idx},this.value)" aria-label="Quantidade">
+              <div style="font-weight:700">${formatMoney(it.preco*it.qtd)}</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn secondary" onclick="removeFromCart(${idx})" aria-label="Remover item">✕</button>
+          </div>
+        `;
+        cartItems.appendChild(el);
+      });
+      cartTotal.textContent = formatMoney(soma);
+      saveCart();
+    }
+
+    function addToCart(id,opts={tamanho:null,cor:null,qtd:1}){
+      const p = produtos.find(x=>x.id===id); if(!p) return;
+      const tamanho = opts.tamanho||p.tamanhos[0];
+      const cor = opts.cor||p.cores[0];
+      const qtd = opts.qtd||1;
+
+      // Checa se o item já existe no carrinho com as mesmas opções para somar a quantidade
+      const existingItem = carrinho.find(item => item.id === id && item.tamanho === tamanho && item.cor === cor);
+      if (existingItem) {
+          existingItem.qtd += qtd;
+      } else {
+          carrinho.push({id:p.id,nome:p.nome,preco:p.preco,img:p.img,tamanho,cor,qtd});
+      }
+
+      updateCartUI(); 
+      showToast(`${qtd} ${p.nome} adicionado(s) ao carrinho`);
+    }
+
+    function removeFromCart(idx){carrinho.splice(idx,1); updateCartUI(); showToast('Item removido');}
+    function changeQty(idx,val){
+      const newQty = Math.max(1,Number(val));
+      if(newQty === 0) return removeFromCart(idx); // Remove se a quantidade for 0
+      carrinho[idx].qtd = newQty; 
+      updateCartUI();
+    }
+    function clearCart(){carrinho=[];updateCartUI();showToast('Carrinho limpo')}
+
+    /* ===== Modal produto ===== */
+    function openModal(id){
+      const p = produtos.find(x=>x.id===id); if(!p)return;
+      
+      document.getElementById('modal-title').textContent = p.nome;
+      document.getElementById('modal-image').src = p.img;
+      document.getElementById('modal-image').alt = p.nome; // Adicionado alt
+      document.getElementById('modal-price').textContent = formatMoney(p.preco);
+      document.getElementById('modal-desc').textContent = p.descricao;
+      document.getElementById('modal-rating').innerHTML = `⭐ ${p.rating} • ${p.reviews} avaliações`;
+      
+      // Render Tamanhos
+      const sizeEl = document.getElementById('modal-size'); sizeEl.innerHTML=''; p.tamanhos.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; sizeEl.appendChild(o)});
+      // Render Cores
+      const colorEl = document.getElementById('modal-color'); colorEl.innerHTML=''; p.cores.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; colorEl.appendChild(o)});
+      
+      document.getElementById('modal-qty').value = 1;
+      
+      // Adicionar ao Carrinho (usa as opções selecionadas no modal)
+      document.getElementById('modal-add').onclick = ()=>{ 
+        const q = Number(document.getElementById('modal-qty').value); 
+        addToCart(p.id,{
+          tamanho:document.getElementById('modal-size').value,
+          cor:document.getElementById('modal-color').value,
+          qtd:q
+        }); 
+        closeModal(); 
+      };
+      
+      // Wishlist
+      document.getElementById('modal-wishlist').onclick = ()=>{
+        toggleWishlist(p.id); 
+        const isFavorited = wishlist.includes(p.id);
+        document.getElementById('modal-wishlist').textContent = isFavorited ? '❤️ Favoritado' : '🤍 Favoritar';
+        showToast(isFavorited ? 'Produto favoritado' : 'Produto removido dos favoritos');
+      }
+
+      // Atualiza o estado inicial do botão de wishlist
+      const isFavorited = wishlist.includes(p.id);
+      document.getElementById('modal-wishlist').textContent = isFavorited ? '❤️ Favoritado' : '🤍 Favoritar';
+
+      modalBackdrop.style.display='flex'; modalBackdrop.setAttribute('aria-hidden','false');
+      // Foca no modal para acessibilidade
+      document.querySelector('.modal').focus();
+    }
+    function closeModal(){modalBackdrop.style.display='none'; modalBackdrop.setAttribute('aria-hidden','true');}
+
+    /* ===== Wishlist simples ===== */
+    function toggleWishlist(id){ 
+      const idx = wishlist.indexOf(id); 
+      if(idx>-1) wishlist.splice(idx,1); 
+      else wishlist.push(id); 
+      localStorage.setItem('sm_wishlist',JSON.stringify(wishlist)); 
+    }
+
+    /* ===== Busca e filtros ===== */
+    // Helper para atualizar botões de tamanho
+    function updateSizeButtons(selectedSize){
+      document.querySelectorAll('#sizes button').forEach(button => {
+        button.classList.remove('active');
+        if(button.dataset.size === selectedSize) {
+          button.classList.add('active');
         }
+      });
+    }
 
-        function atualizarCarrinho() {
-            listaCarrinho.innerHTML = "";
-            let soma = 0;
-            carrinho.forEach((item) => {
-                soma += item.preco;
-                const li = document.createElement("li");
-                li.textContent = `${item.nome} - ${item.cor}, ${item.tamanho} | R$ ${item.preco.toFixed(2)}`;
-                listaCarrinho.appendChild(li);
-            });
-            total.textContent = `R$ ${soma.toFixed(2)}`;
-        }
-    </script>
-</body>
+    document.getElementById('btn-search').addEventListener('click',()=>{ activeFilters.q = document.getElementById('global-search').value; currentPage=1; applyFiltersAndRender(); });
+    document.getElementById('filter-categoria').addEventListener('change',(e)=>{ activeFilters.categoria = e.target.value; currentPage=1; applyFiltersAndRender(); });
+    
+    document.getElementById('apply-price').addEventListener('click',()=>{ 
+      const min = parseFloat(document.getElementById('min-price').value) || null; // Removida a necessidade de replace para ','
+      const max = parseFloat(document.getElementById('max-price').value) || null; // Removida a necessidade de replace para ','
+      activeFilters.minPrice = min; 
+      activeFilters.maxPrice = max; 
+      currentPage=1; 
+      applyFiltersAndRender(); 
+    });
+    
+    document.getElementById('sizes').addEventListener('click',(e)=>{ 
+      if(e.target.dataset && e.target.dataset.size){ 
+        const newSize = e.target.dataset.size;
+        // Lógica de toggle: se clicar no ativo, desativa. Senão, ativa o novo.
+        activeFilters.size = (activeFilters.size === newSize) ? null : newSize;
+        updateSizeButtons(activeFilters.size); // Atualiza a classe 'active'
+        currentPage=1; 
+        applyFiltersAndRender(); 
+      } 
+    });
+    
+    document.getElementById('reset-filters').addEventListener('click',()=>{ 
+      activeFilters={q:'',categoria:'all',minPrice:null,maxPrice:null,size:null,rating:0,sort:'default'}; 
+      document.getElementById('global-search').value=''; 
+      document.getElementById('min-price').value=''; 
+      document.getElementById('max-price').value=''; 
+      document.getElementById('filter-categoria').value='all'; // Reseta select
+      document.getElementById('filter-rating').value='0'; // Reseta select
+      document.getElementById('sort').value='default'; // Reseta select
+      updateSizeButtons(null); // Limpa botões de tamanho
+      currentPage=1; 
+      applyFiltersAndRender(); 
+    });
+    
+    document.getElementById('filter-rating').addEventListener('change',(e)=>{ activeFilters.rating = parseFloat(e.target.value); currentPage=1; applyFiltersAndRender(); });
+    document.getElementById('sort').addEventListener('change',(e)=>{ activeFilters.sort = e.target.value; currentPage=1; applyFiltersAndRender(); }); // Adicionado currentPage=1 ao mudar ordenação
+
+    /* ===== Paginação ===== */
+    document.getElementById('prev-page').addEventListener('click',()=>{ 
+      if(currentPage>1){ currentPage--; applyFiltersAndRender(); } 
+    });
+    document.getElementById('next-page').addEventListener('click',()=>{ 
+      // Não precisa checar aqui, applyFiltersAndRender cuidará do limite
+      currentPage++; applyFiltersAndRender(); 
+    });
+
+    /* ===== Modal controls ===== */
+    document.getElementById('close-modal').addEventListener('click',closeModal);
+    modalBackdrop.addEventListener('click',(e)=>{ if(e.target===modalBackdrop) closeModal(); });
+
+    /* ===== Floating cart controls ===== */
+    document.getElementById('clear-cart').addEventListener('click',clearCart);
+    document.getElementById('checkout').addEventListener('click',()=>{ 
+      if(carrinho.length===0){ 
+        showToast('Adicione produtos antes de finalizar.'); 
+        return;
+      } 
+      showToast(`Checkout simulado de ${formatMoney(carrinho.reduce((acc, item) => acc + item.preco * item.qtd, 0))} — obrigado pela compra!`); 
+      carrinho=[]; 
+      updateCartUI(); 
+    });
+
+    /* ===== small UX features ===== */
+    document.getElementById('toggle-theme').addEventListener('click',()=>{ 
+      document.documentElement.classList.toggle('dark'); 
+      const isDark = document.documentElement.classList.contains('dark');
+      showToast(`Tema ${isDark ? 'Escuro' : 'Claro'} ativado`); 
+    });
+    document.getElementById('open-login').addEventListener('click',()=>{ loginBackdrop.style.display='flex'; loginBackdrop.setAttribute('aria-hidden','false'); });
+    document.getElementById('login-close').addEventListener('click',()=>{ loginBackdrop.style.display='none'; loginBackdrop.setAttribute('aria-hidden','true'); });
+    document.getElementById('login-btn').addEventListener('click',()=>{ 
+      const email = document.getElementById('login-email').value; 
+      if(email.length < 5) { showToast('Email inválido.'); return; }
+      localStorage.setItem('sm_user', JSON.stringify({email})); 
+      loginBackdrop.style.display='none'; 
+      showToast(`Login simulado realizado para: ${email}`); 
+    });
+
+    document.getElementById('open-search').addEventListener('click',()=>{ document.getElementById('global-search').focus(); });
+
+    /* ===== keyboard shortcuts ===== */
+    window.addEventListener('keydown',(e)=>{ 
+      if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){ // Exclui TEXTAREA
+        e.preventDefault(); 
+        document.getElementById('global-search').focus(); 
+      } 
+      if(e.key==='c' && (e.ctrlKey||e.metaKey)){ 
+        e.preventDefault(); 
+        document.getElementById('checkout').click(); 
+      } 
+      if(e.key==='Escape' && modalBackdrop.style.display === 'flex') { // Fecha modal com ESC
+          closeModal();
+      }
+      if(e.key==='Escape' && loginBackdrop.style.display === 'flex') { // Fecha login com ESC
+          document.getElementById('login-close').click();
+      }
+    });
+
+    /* ===== init ===== */
+    function init(){ 
+      updateCartUI(); 
+      applyFiltersAndRender(); 
+      // Aplica o destaque ao botão de tamanho inicial, se houver
+      updateSizeButtons(activeFilters.size);
+    }
+    init();
+
+    /* ===== expose a few functions for inline handlers ===== */
+    window.addToCart = addToCart; 
+    window.openModal = openModal; 
+    window.removeFromCart = removeFromCart; 
+    window.changeQty = changeQty;
+  </script>
+
+  </body>
 </html>
